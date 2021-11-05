@@ -1,14 +1,10 @@
 package main
 
 import (
-	"bufio"
-	"errors"
 	"flag"
 	"io"
 	"log"
 	"os"
-
-	"github.com/mattn/go-runewidth"
 )
 
 var (
@@ -48,62 +44,10 @@ func main() {
 }
 
 func wcut(w io.Writer, r io.Reader) error {
-	bw := bufio.NewWriter(w)
-	br := bufio.NewReader(r)
-	left := offset
-	right := offset + width
-	curr := 0
-	for {
-		ru, _, err := br.ReadRune()
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				break
-			}
-			return nil
-		}
-
-		switch ru {
-		case '\n':
-			if _, err := bw.WriteRune(ru); err != nil {
-				return err
-			}
-			if err := bw.Flush(); err != nil {
-				return err
-			}
-			curr = 0
-
-		case '\r':
-
-		case '\t':
-			n := tabwidth - curr%tabwidth
-			for i := 0; i < n; i++ {
-				if curr >= left && curr+1 <= right {
-					if _, err := bw.WriteRune(' '); err != nil {
-						return err
-					}
-				}
-				curr++
-			}
-
-		default:
-			n := runewidth.RuneWidth(ru)
-			if curr >= left && curr+n <= right {
-				if _, err := bw.WriteRune(ru); err != nil {
-					return err
-				}
-				curr += n
-				break
-			}
-			// write broken (partially in-area) rune
-			for i := 0; i < n; i++ {
-				if curr >= left && curr+1 <= right {
-					if _, err := bw.WriteRune(' '); err != nil {
-						return err
-					}
-				}
-				curr++
-			}
-		}
-	}
-	return bw.Flush()
+	v := newView(w,
+		viewWidth(width),
+		viewOffset(offset),
+		viewTabWidth(tabwidth),
+	)
+	return v.put(r)
 }
