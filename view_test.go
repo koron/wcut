@@ -54,7 +54,7 @@ func TestWcut(t *testing.T) {
 			t.Fatal(err)
 		}
 		if buf.String() != test.output {
-			t.Errorf("wcut: width=%q, offset=%d, tabwidth=%d, %d) = %q, want %q", test.input, test.width, test.offset, test.tabwidth, buf.String(), test.output)
+			t.Errorf("wcut: input=%q, width=%d, offset=%d, tabwidth=%d: want %q but got %q", test.input, test.width, test.offset, test.tabwidth, test.output, buf.String())
 		}
 	}
 }
