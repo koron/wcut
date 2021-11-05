@@ -38,10 +38,10 @@ func viewTabWidth(tabwidth int) viewOption {
 	}
 }
 
-func newView(w io.Writer, options...viewOption) *view {
-	v:= &view{
+func newView(w io.Writer, options ...viewOption) *view {
+	v := &view{
 		w:  bufio.NewWriter(w),
-		r: 80,
+		r:  80,
 		tw: 8,
 	}
 	for _, opt := range options {
